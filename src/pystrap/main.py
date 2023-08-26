@@ -95,8 +95,6 @@ def write_configuration_to_files(project_name, logger, description=None):
         f"\nname = {project_name}"
         f"\ndiscription = {description}"
         "\nauthor = Max Weise"
-        "\nlicense = MIT"
-        "\nlicense_file = LICENSE"
         "\nplatforms = unix, linux, osx, cygwin, win32"
         "\nclassifiers ="
         "\n    Programming Language :: Python :: 3 :: Only"
@@ -105,7 +103,8 @@ def write_configuration_to_files(project_name, logger, description=None):
         "\n[options]"
         f"\npackages = {project_name}"
         "\npython_requires = >=3.10"
-        "\npackage_dir = src"
+        "\npackage_dir = "
+        "\n\t=src"
         "\nzip_safe = no"
     )
     write_contents_to_file(pathlib.Path("setup.cfg"), setup_cfg_contents, logger)
