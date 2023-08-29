@@ -1,0 +1,36 @@
+Quelle: https://ianhopkinson.org.uk/2022/02/understanding-setup-py-setup-cfg-and-pyproject-toml-in-python/
+Abgerufen: 29.08.2023
+
+Grundfragen: Welche funktionalität erfüllen die konfigurationsdateien
+    > setup.py
+    > setup.cfg
+    > pyproject.toml?
+Wo liegt der Unterschied zwischen den Dateien?
+
+
+setup.py
+    - ruft setuptools auf
+    - Muss nicht eingefügt werden, wenn das package nicht veröffentlicht werden muss.
+
+setup.cfg
+    - Gehört zur setuptools suite dazu
+    - Kann gelesen werden, ohne ausgeführt zu werden.
+
+pyproject.toml
+    - Kann als vollumfängliche Konfigurationsdatei verwendet werden
+    - seit PEP-660 kann setup.py durch diese datei ersetzt werden, wenn das paket nicht ausgeliefert werden soll
+
+
+Weitere Informationen:
+1. Coding to solve an immediate problem with no use outside of the current
+    directory anticipated – in this case we don’t need to worry about
+    pyproject.toml, setup.cfg, setup.py or even __init__.py.
+2. Coding to solve an immediate problem with the potentially to spread code
+    over several files and directories – we should now make sure we put an empty
+    __init__.py in each directory containing module files.
+3. Coding to provide a local library to reuse in other projects locally this
+    will require us to run python setup.py develop or better pip install -e .
+4. Coding to provide a library which will be used on other systems you control
+    again using pip install -e .
+5. Coding to provide a library which will be published publicly, here we will
+    need to additionally make use of something like the packaging library.
