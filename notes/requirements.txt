@@ -1,16 +1,20 @@
 
 === v1.0.0
 --- Programm Beschreibung
-    Ein CLI skript, welches das Erstellen eines Python Projekts vereinfachen und standartisieren kann.
-    Vor allem das Anlegen von benötigten Konfigurationsdateien und das Eintragen von Standartwerten ist in den
-    meisten Projekten ähnlich bis gleich, sodass durch ein entsprechendes Skript der Ablauf automatisiert werden kann.
-    Durch diese Form der Standartisierung wird die Fehleranfälligkeit reduziert.
+    Ein CLI skript, welches das Erstellen eines Python Projekts vereinfachen
+    und standartisieren kann.  Vor allem das Anlegen von benötigten
+    Konfigurationsdateien und das Eintragen von Standartwerten ist in den
+    meisten Projekten ähnlich bis gleich, sodass durch ein entsprechendes
+    Skript der Ablauf automatisiert werden kann.  Durch diese Form der
+    Standartisierung wird die Fehleranfälligkeit reduziert.
 
     Usecase
-    Durch den Aufruf von py programmname.py projekt_name [options] soll ein neues Python Projekt initialisiert werden.
-    Es ist zwingend erforderlich, einen Namen für das Projekt anzugeben. Weiterhin sollen durch optionale keyword-Argumente
-    verschiedene Attribute des Projekts festlegbar sein (Pythonversion, Platformen, ...)
-    Das Skript soll selbstständig alle nötigen Dateien im aktuellen Ordner anlegen. Es soll kein Eingreifen des Nutzers
+    Durch den Aufruf von py programmname.py projekt_name [options] soll ein
+    neues Python Projekt initialisiert werden.  Es ist zwingend erforderlich,
+    einen Namen für das Projekt anzugeben. Weiterhin sollen durch optionale
+    keyword-Argumente verschiedene Attribute des Projekts festlegbar sein
+    (Pythonversion, Platformen, ...) Das Skript soll selbstständig alle nötigen
+    Dateien im aktuellen Ordner anlegen. Es soll kein Eingreifen des Nutzers
     nötig sein, um das Projekt anschließend zu installieren.
 
 --- Required functionality
@@ -26,3 +30,22 @@
     [x] Füllen der Dateien (Metadaten, Anweisungen, projektspezifikationen, ...)
     [x] Anlegen einer virtuellen Umgebung.
     [x] CLI Ausgabe hübsch machen.
+
+=== v2.0.0
+--- Findings
+    Durch neue PEP Spezifikationen kann mehr konfiguration in die
+    pyproject.toml Datei ausgelagert werden (Projektmetadaten, Build
+    Requirements, Project Requirements, Konfiguration für Thirdpartytools).
+
+--- ToDos für die Version
+    [ ] Reduzieren der erstellten Konfigdateien
+        [ ] setup.cfg -> depricated. Wird alles in pyproject.toml ausgelagert.
+        [ ] pyproject.toml -> Enthält minimale Ausführung von Metadaten und Installationskonfig, um das Projekt installieren zu können.
+        [ ] setup.py -> kann weggelassen werden, wenn das projekt nicht veröffentlicht werden muss. Kann als Optionaler parameter übergeben werden.
+    [ ] Dokumentation schreiben (als .md oder .tex)
+        [ ] Installation darstellen
+        [ ] Übersicht über die funktionalität bereitstellen
+        [ ] Versionierungsdoku?
+    [ ] Umstellen auf Englisch?
+    [ ] Codestyle und Common Best Practices?
+
