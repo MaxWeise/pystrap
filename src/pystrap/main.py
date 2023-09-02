@@ -9,7 +9,7 @@ import logging
 import pathlib
 import subprocess
 
-__version__ = "v1.0.1"
+__version__ = "v2.0.0"
 __author__ = "Max Weise"
 
 
@@ -76,9 +76,26 @@ def write_configuration_to_files(project_name, logger, description=None):
     Args:
         project_name: The name of the product.
     """
+    if not description:
+        description = "This project has been created with pystrap."
+
     logger.info("Writing contents to files")
     pyprojcect_contents = (
-        "[build-system]"
+        "[project]"
+        '\nauthors = ['
+        '\n\t{name = "Max Weise", email = "maxfencing@web.de"},'
+        '\n]'
+        '\nmaintainers = ['
+        '\n\t{name = "Max Weise", email = "maxfencing@web.de"},'
+        '\n]'
+        "\nclassifiers = ["
+        "\n\tProgramming Language :: Python :: 3 :: Only"
+        "\n\tProgramming Language :: Python :: 3.10"
+        "\n]"
+        f"\nname = {project_name}"
+        f"\ndiscription = {description}"
+        '\nrequires_python = ">=3.10"'
+        "\n[build-system]"
         "\nrequires = ["
         '\n    "setuptools>=42",'
         '\n    "wheel"'
@@ -86,28 +103,6 @@ def write_configuration_to_files(project_name, logger, description=None):
         '\nbuild-backend = "setuptools.build_meta"'
     )
     write_contents_to_file(pathlib.Path("pyproject.toml"), pyprojcect_contents, logger)
-
-    if not description:
-        description = "This project has been created with pystrap."
-
-    setup_cfg_contents = (
-        "[metadata]"
-        f"\nname = {project_name}"
-        f"\ndiscription = {description}"
-        "\nauthor = Max Weise"
-        "\nplatforms = unix, linux, osx, cygwin, win32"
-        "\nclassifiers ="
-        "\n    Programming Language :: Python :: 3 :: Only"
-        "\n    Programming Language :: Python :: 3.10"
-        ""
-        "\n[options]"
-        f"\npackages = {project_name}"
-        "\npython_requires = >=3.10"
-        "\npackage_dir = "
-        "\n\t=src"
-        "\nzip_safe = no"
-    )
-    write_contents_to_file(pathlib.Path("setup.cfg"), setup_cfg_contents, logger)
 
     setup_py_contents = (
         "from setuptools import setup"
