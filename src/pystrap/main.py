@@ -9,10 +9,6 @@ import logging
 import pathlib
 import subprocess
 
-__version__ = "v2.0.0"
-__author__ = "Max Weise"
-
-
 def create_folder(path_to_folder, logger):
     """Create a folder.
 
@@ -82,6 +78,9 @@ def write_configuration_to_files(project_name, logger, description=None):
     logger.info("Writing contents to files")
     pyprojcect_contents = (
         "[project]"
+        f"\nname = {project_name}"
+        f"\ndescription = {description}"
+        '\nversion = "0.0.1"'
         '\nauthors = ['
         '\n\t{name = "Max Weise", email = "maxfencing@web.de"},'
         '\n]'
@@ -89,11 +88,9 @@ def write_configuration_to_files(project_name, logger, description=None):
         '\n\t{name = "Max Weise", email = "maxfencing@web.de"},'
         '\n]'
         "\nclassifiers = ["
-        "\n\tProgramming Language :: Python :: 3 :: Only"
-        "\n\tProgramming Language :: Python :: 3.10"
+        '\n\t"Programming Language :: Python :: 3 :: Only"'
+        '\n\t"Programming Language :: Python :: 3.10"'
         "\n]"
-        f"\nname = {project_name}"
-        f"\ndiscription = {description}"
         '\nrequires_python = ">=3.10"'
         "\n[build-system]"
         "\nrequires = ["
