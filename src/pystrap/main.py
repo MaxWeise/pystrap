@@ -146,7 +146,6 @@ def setup_cli_arguments():
     """Define the CLI Arguments."""
     parser = argparse.ArgumentParser(
         prog="pystrap",
-        usage="py main.py project_name",
     )
 
     parser.add_argument(
