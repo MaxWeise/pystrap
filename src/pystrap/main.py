@@ -67,7 +67,12 @@ def create_project_structure(project_name, logger):
         create_file(init_file, logger)
 
 
-def write_configuration_to_files(project_name, logger, description=None):
+def write_configuration_to_files(
+    project_name,
+    logger,
+    distributable,
+    description=None
+):
     """Write configuration data to the configuration files.
 
     Args:
@@ -104,14 +109,18 @@ def write_configuration_to_files(project_name, logger, description=None):
                            pyprojcect_contents,
                            logger)
 
-    setup_py_contents = (
-        "from setuptools import setup"
-        "\n"
-        "\n"
-        "if __name__ == '__main__':\n"
-        "    setup()"
-    )
-    write_contents_to_file(pathlib.Path("setup.py"), setup_py_contents, logger)
+    if distributable:
+        setup_py_contents = (
+            "from setuptools import setup"
+            "\n"
+            "\n"
+            "if __name__ == '__main__':\n"
+            "    setup()"
+        )
+        write_contents_to_file(
+            pathlib.Path("setup.py"),
+            setup_py_contents, logger
+        )
 
 
 def logger_factory(logging_level=logging.INFO):
@@ -141,11 +150,20 @@ def setup_cli_arguments():
     )
 
     parser.add_argument(
-        "project_name", help="The Name of the project to be bootstrapped."
+        "project_name",
+        help="The Name of the project to be bootstrapped."
     )
 
     parser.add_argument(
-        "-q", "--quiet", action="store_true", help="Disable logging output"
+        "--distributable",
+        action="store_true",
+        help="Create a setup.py file to allow the package to be distributed."
+    )
+
+    parser.add_argument(
+        "-q", "--quiet",
+        action="store_true",
+        help="Disable logging output"
     )
 
     return parser.parse_args()
@@ -157,7 +175,7 @@ def main() -> None:
     console_arguments = setup_cli_arguments()
     project = console_arguments.project_name
 
-    create_project_structure(project, logger)
+    create_project_structure(project, logger, console_arguments.distributable)
     write_configuration_to_files(project, logger)
 
     logger.info("Finished execution")
