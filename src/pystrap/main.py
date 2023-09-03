@@ -9,6 +9,7 @@ import logging
 import pathlib
 import subprocess
 
+
 def create_folder(path_to_folder, logger):
     """Create a folder.
 
@@ -99,7 +100,9 @@ def write_configuration_to_files(project_name, logger, description=None):
         "\n]"
         '\nbuild-backend = "setuptools.build_meta"'
     )
-    write_contents_to_file(pathlib.Path("pyproject.toml"), pyprojcect_contents, logger)
+    write_contents_to_file(pathlib.Path("pyproject.toml"),
+                           pyprojcect_contents,
+                           logger)
 
     setup_py_contents = (
         "from setuptools import setup"
@@ -135,7 +138,6 @@ def setup_cli_arguments():
     parser = argparse.ArgumentParser(
         prog="pystrap",
         usage="py main.py project_name",
-        epilog=f"This is version {__version__}. The script is created and maintained by {__author__}",
     )
 
     parser.add_argument(
