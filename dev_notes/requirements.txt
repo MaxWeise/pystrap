@@ -38,7 +38,7 @@
     Requirements, Project Requirements, Konfiguration für Thirdpartytools).
 
 --- ToDos für die Version
-    [ ] Reduzieren der erstellten Konfigdateien
+    [x] Reduzieren der erstellten Konfigdateien
         [x] setup.cfg -> depricated. Wird alles in pyproject.toml ausgelagert.
         [x] pyproject.toml -> Enthält minimale Ausführung von Metadaten und Installationskonfig, um das Projekt installieren zu können.
         [x] setup.py -> kann weggelassen werden, wenn das projekt nicht veröffentlicht werden muss. Kann als Optionaler parameter übergeben werden.

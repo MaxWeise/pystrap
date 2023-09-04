@@ -29,4 +29,5 @@ This will create the following project layout:
 ```
 
 The files contain default parameters that allow the project to be directly installed into a virtual environment.
+For more information on how to use the script, please refer to the docs.
 
