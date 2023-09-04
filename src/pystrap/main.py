@@ -71,6 +71,8 @@ def write_configuration_to_files(
     project_name,
     logger,
     distributable,
+    author_name=None,
+    author_email=None,
     description=None
 ):
     """Write configuration data to the configuration files.
@@ -78,6 +80,12 @@ def write_configuration_to_files(
     Args:
         project_name: The name of the product.
     """
+    if not author_name:
+        author_name = "author_name"
+
+    if not author_email:
+        author_email = "author_email@example.com"
+
     if not description:
         description = "This project has been created with pystrap."
 
@@ -88,7 +96,7 @@ def write_configuration_to_files(
         f"\ndescription = {description}"
         '\nversion = "0.0.1"'
         '\nauthors = ['
-        '\n\t{name = "Max Weise", email = "maxfencing@web.de"},'
+        f'\n\t{{name = {author_name}, email ={author_email}}},'
         '\n]'
         '\nmaintainers = ['
         '\n\t{name = "Max Weise", email = "maxfencing@web.de"},'
