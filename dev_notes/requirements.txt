@@ -44,7 +44,7 @@
         [x] setup.py -> kann weggelassen werden, wenn das projekt nicht veröffentlicht werden muss. Kann als Optionaler parameter übergeben werden.
     [ ] Dokumentation schreiben (als .md oder .tex)
         in README.md |[x] Installation darstellen
-                     |[ ] Übersicht über die funktionalität bereitstellen
-        [ ] Versionierungsdoku?
+                     |[-] Übersicht über die funktionalität bereitstellen -> Automatische Erstellung, sphinx? pydoc?
+        [ ] Versionierungsdoku? -> Keinen Sinn, ist direkt in git
     [ ] Umstellen auf Englisch?
     [ ] Codestyle und Common Best Practices?
