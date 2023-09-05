@@ -6,10 +6,12 @@ The goal of the project is to provide a simple method to create and setup the fi
 who want a standardized method to setup python projects. The script does not download any additional dependencies, so it is lightweigt and does not need any further configuration.
 
 ## Installation
-Installing the script can be done using pip via the link to this repository.
+To install the script, clone the latest version of the production branch and install the application using pip.
 
 ```
-pip install https://github.com/MaxWeise/pystrap
+git clone https://github.com/MaxWeise/pystrap
+cd pystrap/
+pip install .
 ```
 
 The script can be installed with or without a virtual environment, depending on your needs.
