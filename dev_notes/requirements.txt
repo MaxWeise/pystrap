@@ -45,6 +45,3 @@
     [ ] Dokumentation schreiben (als .md oder .tex)
         in README.md |[x] Installation darstellen
                      |[-] Übersicht über die funktionalität bereitstellen -> Automatische Erstellung, sphinx? pydoc?
-        [ ] Versionierungsdoku? -> Keinen Sinn, ist direkt in git
-    [ ] Umstellen auf Englisch?
-    [ ] Codestyle und Common Best Practices?
