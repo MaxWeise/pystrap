@@ -4,10 +4,17 @@ Created: 22.08.2023
 @author: Max Weise
 """
 
+import dataclasses
 import argparse
 import logging
 import pathlib
 import subprocess
+
+
+@dataclasses.dataclass
+class Author:
+    name: str | None
+    email: str | None
 
 
 def create_folder(path_to_folder, logger):
@@ -70,9 +77,8 @@ def create_project_structure(project_name, logger):
 def write_configuration_to_files(
     project_name,
     logger,
-    distributable,
-    author_name=None,
-    author_email=None,
+    distributable=None,
+    author=None,
     description=None
 ):
     """Write configuration data to the configuration files.
@@ -80,11 +86,8 @@ def write_configuration_to_files(
     Args:
         project_name: The name of the product.
     """
-    if not author_name:
-        author_name = "author_name"
-
-    if not author_email:
-        author_email = "author_email@example.com"
+    author_name = author.name if author else None
+    author_email = author.email if author else None
 
     if not description:
         description = "This project has been created with pystrap."
@@ -162,6 +165,18 @@ def setup_cli_arguments():
     )
 
     parser.add_argument(
+        "--author-name",
+        default=None,
+        help="The name of the author"
+    )
+
+    parser.add_argument(
+        "--author-email",
+        default=None,
+        help="The email address of the author"
+    )
+
+    parser.add_argument(
         "--distributable",
         action="store_true",
         help="Create a setup.py file to allow the package to be distributed."
@@ -181,9 +196,17 @@ def main() -> None:
     logger = logger_factory()
     console_arguments = setup_cli_arguments()
     project = console_arguments.project_name
+    author = Author(console_arguments.author_name,
+                    console_arguments.author_email)
+    distributable = console_arguments.distributable
 
-    create_project_structure(project, logger, console_arguments.distributable)
-    write_configuration_to_files(project, logger)
+    create_project_structure(project, logger)
+    write_configuration_to_files(
+        project,
+        logger,
+        author=author,
+        distributable=distributable
+    )
 
     logger.info("Finished execution")
 
