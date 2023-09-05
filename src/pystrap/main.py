@@ -51,13 +51,17 @@ def write_contents_to_file(path_to_file, contents, logger):
         f.write(contents)
 
 
-def create_project_structure(project_name, logger):
+def create_project_structure(project_name, logger, distributable=False):
     """Create all necessary folders and configuration files.
 
     Args:
         project_name: The name of the project.
     """
-    toplevel_file_names = ["pyproject.toml", "setup.cfg", "setup.py"]
+    toplevel_file_names = ["pyproject.toml"]
+
+    if distributable:
+        toplevel_file_names.append("setup.py")
+
     project_folders = [f"src/{project_name}", "tests"]
     init_files = ["tests/__init__.py", f"src/{project_name}/__init__.py"]
 
@@ -77,7 +81,7 @@ def create_project_structure(project_name, logger):
 def write_configuration_to_files(
     project_name,
     logger,
-    distributable=None,
+    distributable=False,
     author=None,
     description=None
 ):
