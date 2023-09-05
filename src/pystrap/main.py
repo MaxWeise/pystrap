@@ -103,10 +103,10 @@ def write_configuration_to_files(
         f"\ndescription = {description}"
         '\nversion = "0.0.1"'
         '\nauthors = ['
-        f'\n\t{{name = {author_name}, email ={author_email}}},'
+        f'\n\t{{name = "{author_name}", email ="{author_email}"}},'
         '\n]'
         '\nmaintainers = ['
-        '\n\t{name = "Max Weise", email = "maxfencing@web.de"},'
+        f'\n\t{{name = "{author_name}", email ="{author_email}"}},'
         '\n]'
         "\nclassifiers = ["
         '\n\t"Programming Language :: Python :: 3 :: Only"'
