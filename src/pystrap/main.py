@@ -4,8 +4,8 @@ Created: 22.08.2023
 @author: Max Weise
 """
 
-import dataclasses
 import argparse
+import dataclasses
 import logging
 import pathlib
 import subprocess
@@ -13,6 +13,13 @@ import subprocess
 
 @dataclasses.dataclass
 class Author:
+    """The representation of an author.
+
+    Attrs:
+        name (str | none): Fullname of the Author. May contain spaces.
+        email (str | none): Email address of the author.
+    """
+
     name: str | None
     email: str | None
 
@@ -79,11 +86,7 @@ def create_project_structure(project_name, logger, distributable=False):
 
 
 def write_configuration_to_files(
-    project_name,
-    logger,
-    distributable=False,
-    author=None,
-    description=None
+    project_name, logger, distributable=False, author=None, description=None
 ):
     """Write configuration data to the configuration files.
 
@@ -102,12 +105,12 @@ def write_configuration_to_files(
         f"\nname = {project_name}"
         f"\ndescription = {description}"
         '\nversion = "0.0.1"'
-        '\nauthors = ['
+        "\nauthors = ["
         f'\n\t{{name = "{author_name}", email ="{author_email}"}},'
-        '\n]'
-        '\nmaintainers = ['
+        "\n]"
+        "\nmaintainers = ["
         f'\n\t{{name = "{author_name}", email ="{author_email}"}},'
-        '\n]'
+        "\n]"
         "\nclassifiers = ["
         '\n\t"Programming Language :: Python :: 3 :: Only"'
         '\n\t"Programming Language :: Python :: 3.10"'
@@ -120,9 +123,11 @@ def write_configuration_to_files(
         "\n]"
         '\nbuild-backend = "setuptools.build_meta"'
     )
-    write_contents_to_file(pathlib.Path("pyproject.toml"),
-                           pyprojcect_contents,
-                           logger)
+    write_contents_to_file(
+        pathlib.Path("pyproject.toml"),
+        pyprojcect_contents,
+        logger
+    )
 
     if distributable:
         setup_py_contents = (
@@ -134,7 +139,8 @@ def write_configuration_to_files(
         )
         write_contents_to_file(
             pathlib.Path("setup.py"),
-            setup_py_contents, logger
+            setup_py_contents,
+            logger
         )
 
 
@@ -143,6 +149,12 @@ def logger_factory(logging_level=logging.INFO):
 
     The logger can be used as a debug tool to observe the behaviour of the
     scirpt while its runing.
+
+    Args:
+        logging_level: The level which should be logged. Defaults to INFO.
+
+    Returns:
+        logger: The logger object which logs to the console.
     """
     loggmessage_format = logging.Formatter("[%(levelname)s] - %(message)s")
 
@@ -164,32 +176,25 @@ def setup_cli_arguments():
     )
 
     parser.add_argument(
-        "project_name",
-        help="The Name of the project to be bootstrapped."
+        "project_name", help="The Name of the project to be bootstrapped."
     )
 
     parser.add_argument(
-        "--author-name",
-        default=None,
-        help="The name of the author"
+        "--author-name", default=None, help="The name of the author"
     )
 
     parser.add_argument(
-        "--author-email",
-        default=None,
-        help="The email address of the author"
+        "--author-email", default=None, help="The email address of the author"
     )
 
     parser.add_argument(
         "--distributable",
         action="store_true",
-        help="Create a setup.py file to allow the package to be distributed."
+        help="Create a setup.py file to allow the package to be distributed.",
     )
 
     parser.add_argument(
-        "-q", "--quiet",
-        action="store_true",
-        help="Disable logging output"
+        "-q", "--quiet", action="store_true", help="Disable logging output"
     )
 
     return parser.parse_args()
@@ -200,16 +205,15 @@ def main() -> None:
     logger = logger_factory()
     console_arguments = setup_cli_arguments()
     project = console_arguments.project_name
-    author = Author(console_arguments.author_name,
-                    console_arguments.author_email)
+    author = Author(
+        console_arguments.author_name,
+        console_arguments.author_email
+    )
     distributable = console_arguments.distributable
 
     create_project_structure(project, logger)
     write_configuration_to_files(
-        project,
-        logger,
-        author=author,
-        distributable=distributable
+        project, logger, author=author, distributable=distributable
     )
 
     logger.info("Finished execution")
