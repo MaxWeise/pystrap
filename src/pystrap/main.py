@@ -10,6 +10,9 @@ import logging
 import pathlib
 import subprocess
 
+# === Type definition
+pathlike = pathlib.Path | str
+
 
 @dataclasses.dataclass
 class Author:
@@ -24,6 +27,7 @@ class Author:
     email: str | None
 
 
+# === IO Operations
 def create_folder(path_to_folder, logger):
     """Create a folder.
 
@@ -35,15 +39,20 @@ def create_folder(path_to_folder, logger):
     subprocess.run(["mkdir", "-p", path_to_folder])
 
 
-def create_file(path_to_file, logger):
+def create_file(path_to_file: pathlike, logger) -> bool:
     """Create a file.
 
     Args:
         path_to_file: The path to the file, relative to the current
             working directory.
+
+    Returns:
+        bool: The sucessvalue of the function.
     """
     logger.info(f"Creating the file {path_to_file}")
     subprocess.run(["touch", path_to_file])
+
+    return True
 
 
 def write_contents_to_file(path_to_file, contents, logger):
@@ -58,6 +67,7 @@ def write_contents_to_file(path_to_file, contents, logger):
         f.write(contents)
 
 
+# === Usecase specific functions
 def create_project_structure(project_name, logger, distributable=False):
     """Create all necessary folders and configuration files.
 
