@@ -40,11 +40,6 @@ class TestFileWriter(unittest.TestCase):
         actual = main.create_file(file_path, self._logger)
         self.assertTrue(actual)
 
-    @unittest.skip("Implemented later")
-    def test_create_file_PathNotValid(self):
-        """Tests the correct error behaviour when the path is not valid."""
-        pass
-
     def tearDown(self):
         """Cleanup the test environment."""
         if self._test_file.exists():
