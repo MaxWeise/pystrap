@@ -28,12 +28,15 @@ class Author:
 
 
 # === IO Operations
-def create_folder(path_to_folder, logger):
+def create_folder(path_to_folder: pathlike, logger) -> bool:
     """Create a folder.
 
     Args:
         path_to_folder: The path to the folder, relative to the current
             working directory.
+
+    Returns:
+        bool: Sucessvalue of the function.
     """
     logger.info(f"Creating the folder {path_to_folder}")
     subprocess.run(["mkdir", "-p", path_to_folder])
@@ -57,24 +60,38 @@ def create_file(path_to_file: pathlike, logger) -> bool:
     return True
 
 
-def write_contents_to_file(path_to_file, contents, logger):
+def write_contents_to_file(path_to_file: pathlike,
+                           contents: str,
+                           logger) -> bool:
     """Write a string to an already existing file.
 
     Args:
         path_to_file: The file which is written to.
         contents: The contents of the file as strings.
+
+    Returns:
+        bool: Sucessvalue of the method.
     """
     logger.info(f"Writing to {path_to_file}")
     with open(path_to_file, "w", encoding="utf-8") as f:
         f.write(contents)
 
+    return True
+
 
 # === Usecase specific functions
-def create_project_structure(project_name, logger, distributable=False):
+def create_project_structure(
+    project_name: str,
+    logger,
+    distributable: bool = False
+) -> bool:
     """Create all necessary folders and configuration files.
 
     Args:
         project_name: The name of the project.
+
+    Return:
+        bool: Sucessvalue of the function.
     """
     toplevel_file_names = ["pyproject.toml"]
 
@@ -96,10 +113,16 @@ def create_project_structure(project_name, logger, distributable=False):
     for init_file in init_files:
         create_file(init_file, logger)
 
+    return True
+
 
 def write_configuration_to_files(
-    project_name, logger, distributable=False, author=None, description=None
-):
+    project_name: str,
+    logger: logging.Logger,
+    distributable: bool = False,
+    author: Author | None = None,
+    description: str | None = None
+) -> bool:
     """Write configuration data to the configuration files.
 
     Args:
@@ -155,8 +178,10 @@ def write_configuration_to_files(
             logger
         )
 
+    return True
 
-def logger_factory(logging_level=logging.INFO):
+
+def logger_factory(logging_level: int = logging.INFO):
     """Create a logger for the script.
 
     The logger can be used as a debug tool to observe the behaviour of the
@@ -181,7 +206,7 @@ def logger_factory(logging_level=logging.INFO):
     return logger
 
 
-def setup_cli_arguments():
+def setup_cli_arguments() -> argparse.Namespace:
     """Define the CLI Arguments."""
     parser = argparse.ArgumentParser(
         prog="pystrap",
