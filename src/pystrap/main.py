@@ -137,8 +137,8 @@ def write_configuration_to_files(
     logger.info("Writing contents to files")
     pyprojcect_contents = (
         "[project]"
-        f"\nname = {project_name}"
-        f"\ndescription = {description}"
+        f'\nname = "{project_name}"'
+        f'\ndescription = "{description}"'
         '\nversion = "0.0.1"'
         "\nauthors = ["
         f'\n\t{{name = "{author_name}", email ="{author_email}"}},'
@@ -147,7 +147,7 @@ def write_configuration_to_files(
         f'\n\t{{name = "{author_name}", email ="{author_email}"}},'
         "\n]"
         "\nclassifiers = ["
-        '\n\t"Programming Language :: Python :: 3 :: Only"'
+        '\n\t"Programming Language :: Python :: 3 :: Only",'
         '\n\t"Programming Language :: Python :: 3.10"'
         "\n]"
         '\nrequires_python = ">=3.10"'
