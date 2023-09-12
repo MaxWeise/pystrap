@@ -3,12 +3,16 @@ name = "pystrap"
 version = "2.1.2"
 description = "A simple CLI util to setup python projects."
 requires-python = ">=3.10"
+readme = "README.md"
+license = {file = "LICENSE.txt"}
 authors = [
     {name = "Max Weise", email = "maxfencing@web.de"},
 ]
+
 maintainers = [
     {name = "Max Weise", email = "maxfencing@web.de"},
 ]
+
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10:"
@@ -18,7 +22,9 @@ classifiers = [
 pystrap = "pystrap.main:main"
 
 [build-system]
-requires = ["setuptools>=42",
+requires = [
+    "setuptools>=42",
     "wheel"
 ]
+
 build-backend = "setuptools.build_meta"
