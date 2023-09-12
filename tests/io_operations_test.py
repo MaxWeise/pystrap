@@ -52,11 +52,11 @@ class TestDirectoryWriter(unittest.TestCase):
     def setUp(self):
         """Create the test environment."""
         self._logger = logging.getLogger("TestFileWriterLogger")
+        self._test_dir = pathlib.Path("test_dir/")
 
-    @unittest.skip("Fixed later")
     def test_create_folder(self):
         """Test the correct creation of a directory."""
-        folder_path = pathlib.Path("test_dir/")
+        folder_path = self._test_dir
 
         actual = main.create_folder(folder_path, self._logger)
 
@@ -64,13 +64,17 @@ class TestDirectoryWriter(unittest.TestCase):
         self.assertTrue(actual)
         self.assertTrue(folder_exists)
 
-    @unittest.skip("Fixed later")
     def test_create_folder_FolderExists(self):
         """Test correct behaviour when a directory exists."""
-        folder_path = pathlib.Path("test_dir/")
+        folder_path = self._test_dir
         subprocess.run(["mkdir", folder_path])
 
         self.assertTrue(folder_path.exists())     # TODO: Can be removed later
 
         actual = main.create_folder(folder_path, self._logger)
         self.assertTrue(actual)
+
+    def tearDown(self):
+        """Cleanup the test environment."""
+        if pathlib.Path.exists(self._test_dir):
+            os.rmdir(self._test_dir)
