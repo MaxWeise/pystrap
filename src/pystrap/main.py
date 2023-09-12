@@ -150,7 +150,7 @@ def write_configuration_to_files(
         '\n\t"Programming Language :: Python :: 3 :: Only",'
         '\n\t"Programming Language :: Python :: 3.10"'
         "\n]"
-        '\nrequires_python = ">=3.10"'
+        '\nrequires-python = ">=3.10"'
         "\n[build-system]"
         "\nrequires = ["
         '\n    "setuptools>=42",'
