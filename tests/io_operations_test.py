@@ -69,8 +69,6 @@ class TestDirectoryWriter(unittest.TestCase):
         folder_path = self._test_dir
         subprocess.run(["mkdir", folder_path])
 
-        self.assertTrue(folder_path.exists())     # TODO: Can be removed later
-
         actual = main.create_folder(folder_path, self._logger)
         self.assertTrue(actual)
 

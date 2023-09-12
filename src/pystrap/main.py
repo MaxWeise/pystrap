@@ -38,6 +38,8 @@ def create_folder(path_to_folder, logger):
     logger.info(f"Creating the folder {path_to_folder}")
     subprocess.run(["mkdir", "-p", path_to_folder])
 
+    return True
+
 
 def create_file(path_to_file: pathlike, logger) -> bool:
     """Create a file.
