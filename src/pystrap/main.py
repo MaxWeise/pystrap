@@ -9,12 +9,96 @@ import dataclasses
 import logging
 import pathlib
 import subprocess
-from typing import Any
+from typing import Any, Protocol
 
 import tomli_w
 
 # === Type definition
 pathlike = pathlib.Path | str
+
+
+class Logger(Protocol):
+
+    def info(self, message: str) -> None:
+        """Print an info message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
+
+    def warning(self, message: str) -> None:
+        """Print an warning message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
+
+    def error(self, message: str) -> None:
+        """Print an error message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
+
+class StreamLogger:
+
+    def __init__(self, logging_level: int):
+        """Initialize a logger object that prints to std out.
+
+        Args:
+            logging_level (int): The log level.
+        """
+        self._logging_level = logging_level
+
+        loggmessage_format = logging.Formatter("[%(levelname)s] - %(message)s")
+
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging_level)
+
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging_level)
+        console_handler.setFormatter(loggmessage_format)
+        logger.addHandler(console_handler)
+
+        self._logger: logging.Logger = logger
+
+    @property
+    def logging_level(self) -> int:
+        """The level at which the logger operates."""
+        return self._logging_level
+
+    def info(self, message: str) -> None:
+        """Print an info message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        self._logger.info(message)
+
+    def warning(self, message: str) -> None:
+        """Print an warning message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        self._logger.warning(message)
+
+    def error(self, message: str) -> None:
+        """Print an error message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        self._logger.error(message)
 
 
 @dataclasses.dataclass
