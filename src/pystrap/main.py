@@ -9,6 +9,9 @@ import dataclasses
 import logging
 import pathlib
 import subprocess
+from typing import Any
+
+import tomli_w
 
 # === Type definition
 pathlike = pathlib.Path | str
@@ -23,8 +26,8 @@ class Author:
         email (str | none): Email address of the author.
     """
 
-    name: str | None
-    email: str | None
+    name: str
+    email: str
 
 
 # === IO Operations
@@ -116,6 +119,49 @@ def create_project_structure(
     return True
 
 
+def get_project_metadata(
+    project_name: str,
+    description: str | None = None,
+    author: Author | None = None
+) -> dict[str, Any]:
+    project_metadata: dict[str, Any] = {}
+
+    author_name: str = author.name if author else ""
+    author_email: str = author.email if author else ""
+    project_description: str = description if description else ""
+    authors: dict[str, str] = {
+        "name": author_name,
+        "email": author_email
+    }
+
+    project: dict[str, Any] = {
+        "name": project_name,
+        "description": project_description,
+        "version": "0.0.1",
+        "authors": [authors],
+        "maintainers": [authors],
+        "requires-python": ">=3.10"
+    }
+
+    project_metadata["project"] = project
+
+    return project_metadata
+
+
+def get_build_system_config() -> dict[str, Any]:
+    build_system_config: dict[str, Any] = {
+        "[build-system]": {
+            "requires": [
+                "setuptools>=42",
+                "wheel"
+            ],
+            "build-backend": "setuptools.build_meta"
+        }
+    }
+
+    return build_system_config
+
+
 def write_configuration_to_files(
     project_name: str,
     logger: logging.Logger,
@@ -128,39 +174,19 @@ def write_configuration_to_files(
     Args:
         project_name: The name of the product.
     """
-    author_name = author.name if author else None
-    author_email = author.email if author else None
-
     if not description:
         description = "This project has been created with pystrap."
 
     logger.info("Writing contents to files")
-    pyprojcect_contents = (
-        "[project]"
-        f'\nname = "{project_name}"'
-        f'\ndescription = "{description}"'
-        '\nversion = "0.0.1"'
-        "\nauthors = ["
-        f'\n\t{{name = "{author_name}", email ="{author_email}"}},'
-        "\n]"
-        "\nmaintainers = ["
-        f'\n\t{{name = "{author_name}", email ="{author_email}"}},'
-        "\n]"
-        "\nclassifiers = ["
-        '\n\t"Programming Language :: Python :: 3 :: Only",'
-        '\n\t"Programming Language :: Python :: 3.10"'
-        "\n]"
-        '\nrequires-python = ">=3.10"'
-        "\n[build-system]"
-        "\nrequires = ["
-        '\n    "setuptools>=42",'
-        '\n    "wheel"'
-        "\n]"
-        '\nbuild-backend = "setuptools.build_meta"'
+    pyprojcect_contents: dict[str, Any] = get_project_metadata(
+        project_name,
+        author=author,
+        description=description
     )
+
     write_contents_to_file(
         pathlib.Path("pyproject.toml"),
-        pyprojcect_contents,
+        tomli_w.dumps(pyprojcect_contents),
         logger
     )
 
