@@ -9,12 +9,104 @@ import dataclasses
 import logging
 import pathlib
 import subprocess
-from typing import Any
+from typing import Any, Protocol
 
 import tomli_w
 
 # === Type definition
 pathlike = pathlib.Path | str
+
+
+class Logger(Protocol):
+    """Logger interface all loggers used must adhere to."""
+
+    def info(self, message: str) -> None:
+        """Print an info message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
+
+    def warning(self, message: str) -> None:
+        """Print an warning message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
+
+    def error(self, message: str) -> None:
+        """Print an error message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
+
+
+class StreamLogger:
+    """Implements a logger printing to std out.
+
+    Attrs:
+        _logging_level (int): The level at which messages should be displayed.
+        _logger (logging.Logger): The logger used to print ot sdt out.
+    """
+
+    def __init__(self, logging_level: int):
+        """Initialize a logger object that prints to std out.
+
+        Args:
+            logging_level (int): The log level.
+        """
+        self._logging_level = logging_level
+
+        loggmessage_format = logging.Formatter("[%(levelname)s] - %(message)s")
+
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging_level)
+
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging_level)
+        console_handler.setFormatter(loggmessage_format)
+        logger.addHandler(console_handler)
+
+        self._logger: logging.Logger = logger
+
+    @property
+    def logging_level(self) -> int:
+        """The level at which the logger operates."""
+        return self._logging_level
+
+    def info(self, message: str) -> None:
+        """Print an info message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        self._logger.info(message)
+
+    def warning(self, message: str) -> None:
+        """Print an warning message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        self._logger.warning(message)
+
+    def error(self, message: str) -> None:
+        """Print an error message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        self._logger.error(message)
 
 
 @dataclasses.dataclass
@@ -31,7 +123,7 @@ class Author:
 
 
 # === IO Operations
-def create_folder(path_to_folder: pathlike, logger) -> bool:
+def create_folder(path_to_folder: pathlike, logger: Logger) -> bool:
     """Create a folder.
 
     Args:
@@ -47,7 +139,7 @@ def create_folder(path_to_folder: pathlike, logger) -> bool:
     return True
 
 
-def create_file(path_to_file: pathlike, logger) -> bool:
+def create_file(path_to_file: pathlike, logger: Logger) -> bool:
     """Create a file.
 
     Args:
@@ -63,9 +155,11 @@ def create_file(path_to_file: pathlike, logger) -> bool:
     return True
 
 
-def write_contents_to_file(path_to_file: pathlike,
-                           contents: str,
-                           logger) -> bool:
+def write_contents_to_file(
+    path_to_file: pathlike,
+    contents: str,
+    logger: Logger
+) -> bool:
     """Write a string to an already existing file.
 
     Args:
@@ -85,7 +179,7 @@ def write_contents_to_file(path_to_file: pathlike,
 # === Usecase specific functions
 def create_project_structure(
     project_name: str,
-    logger,
+    logger: Logger,
     distributable: bool = False
 ) -> bool:
     """Create all necessary folders and configuration files.
@@ -164,7 +258,7 @@ def get_build_system_config() -> dict[str, Any]:
 
 def write_configuration_to_files(
     project_name: str,
-    logger: logging.Logger,
+    logger: Logger,
     distributable: bool = False,
     author: Author | None = None,
     description: str | None = None
@@ -207,7 +301,7 @@ def write_configuration_to_files(
     return True
 
 
-def logger_factory(logging_level: int = logging.INFO):
+def logger_factory(requested_logger: str, logging_level: int = logging.INFO):
     """Create a logger for the script.
 
     The logger can be used as a debug tool to observe the behaviour of the
@@ -219,17 +313,11 @@ def logger_factory(logging_level: int = logging.INFO):
     Returns:
         logger: The logger object which logs to the console.
     """
-    loggmessage_format = logging.Formatter("[%(levelname)s] - %(message)s")
+    loggers = {
+        "console": StreamLogger
+    }
 
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging_level)
-
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging_level)
-    console_handler.setFormatter(loggmessage_format)
-    logger.addHandler(console_handler)
-
-    return logger
+    return loggers[requested_logger](logging_level)
 
 
 def setup_cli_arguments() -> argparse.Namespace:
@@ -265,7 +353,7 @@ def setup_cli_arguments() -> argparse.Namespace:
 
 def main() -> None:
     """Run the main method of the programm."""
-    logger = logger_factory()
+    logger = logger_factory("console", logging.INFO)
     console_arguments = setup_cli_arguments()
     project = console_arguments.project_name
     author = Author(
