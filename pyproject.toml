@@ -26,6 +26,9 @@ dependencies = [
 [project.scripts]
 pystrap = "pystrap.main:main"
 
+[project.optional-dependencies]
+dev = ["flake8", "isort", "mypy", "pydocstyle"]
+
 [build-system]
 requires = [
     "setuptools>=42",
