@@ -11,10 +11,62 @@ import pathlib
 import subprocess
 from typing import Any, Protocol
 
+import bullet
 import tomli_w
 
 # === Type definition
 pathlike = pathlib.Path | str
+
+
+class UI:
+
+    def __init__(self) -> None:
+        """Initialize an object that handles interactions with the UI."""
+        self._project_name: str | None = None
+        self._auhtor_name: str | None = None
+        self._auhtor_email: str | None = None
+        self._distributable: bool = False
+
+    def _validate_email(self, email_to_validate: str) -> bool:
+        """Perform simple checks on a string to verify it's format."""
+        if "@" not in email_to_validate:
+            return False
+
+        email_parts: list[str] = email_to_validate.split("@")
+
+        if "." not in email_parts[1]:
+            return False
+
+        return True
+
+    def ask_project_name(self) -> None:
+        prompt = bullet.Input(prompt="Please give the name of the project: ")
+        self._project_name = prompt.launch()
+
+    def ask_author_name(self) -> None:
+        prompt = bullet.Input(prompt="Please give the name of the Author: ")
+        self._auhtor_name = prompt.launch()
+
+    def ask_author_email(self) -> None:
+        prompt = bullet.Input(
+            prompt="Please give the email adress of the author: "
+        )
+        user_input = prompt.launch()
+
+        if not user_input:
+            return
+
+        if self._validate_email(user_input):
+            self._auhtor_email = user_input
+
+    def ask_distributable(self) -> None:
+        prompt = bullet.YesNo(
+                prompt="Do you intend to upload the project ot PyPI?",
+                default="N"
+        )
+
+        user_input = prompt.launch()
+        self._distributable = user_input
 
 
 class Logger(Protocol):
@@ -313,6 +365,7 @@ def logger_factory(requested_logger: str, logging_level: int = logging.INFO):
     Returns:
         logger: The logger object which logs to the console.
     """
+    # TODO: Add file logger
     loggers = {
         "console": StreamLogger
     }
@@ -328,6 +381,12 @@ def setup_cli_arguments() -> argparse.Namespace:
 
     parser.add_argument(
         "project_name", help="The Name of the project to be bootstrapped."
+    )
+
+    parser.add_argument(
+        "-i", "--interactive",
+        default=False,
+        help="Activate interactive mode when creating a new project."
     )
 
     parser.add_argument(
@@ -351,10 +410,8 @@ def setup_cli_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> None:
+def run_console_script(console_arguments, logger: Logger) -> None:
     """Run the main method of the programm."""
-    logger = logger_factory("console", logging.INFO)
-    console_arguments = setup_cli_arguments()
     project = console_arguments.project_name
     author = Author(
         console_arguments.author_name,
@@ -370,5 +427,28 @@ def main() -> None:
     logger.info("Finished execution")
 
 
+def run_tui(console_arguments=None, logger: Logger | None = None) -> None:
+    terminal_client = UI()
+    terminal_client.ask_project_name()
+    terminal_client.ask_author_name()
+    terminal_client.ask_author_email()
+    terminal_client.ask_distributable()
+
+    print(terminal_client)
+
+
+def main():
+    console_arguments = setup_cli_arguments()
+
+    if console_arguments.interactive:
+        logger = logger_factory("file", logging.INFO)
+        run_tui(console_arguments, logger)
+    else:
+        # Default is console
+        logger = logger_factory("console", logging.INFO)
+        run_console_script(console_arguments, logger)
+
+
 if __name__ == "__main__":
-    main()
+    # main()
+    run_tui()
