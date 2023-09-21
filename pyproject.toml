@@ -27,6 +27,7 @@ dependencies = [
 pystrap = "pystrap.main:main"
 
 [project.optional-dependencies]
+tui = ["bullet == 2.2.0"]
 dev = ["flake8", "isort", "mypy", "pydocstyle"]
 
 [build-system]
