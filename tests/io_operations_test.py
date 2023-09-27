@@ -13,12 +13,40 @@ import unittest
 from pystrap import main
 
 
+class _EmptyLogger:
+    """This class holds stub methods to adhere to the logger protocoll."""
+
+    def info(self, message: str) -> None:
+        """Print an info message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        # Stub method
+
+    def warning(self, message: str) -> None:
+        """Print an warning message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        # Stub method
+
+    def error(self, message: str) -> None:
+        """Print an error message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        # Stub method
+
+
 class TestFileWriter(unittest.TestCase):
     """Test methods that write to files."""
 
     def setUp(self):
         """Create the test environment."""
-        self._logger = logging.getLogger("TestFileWriterLogger")
+        self._logger = _EmptyLogger()
         self._test_file = pathlib.Path("test_file.txt")
 
     def test_create_file(self):
@@ -51,7 +79,7 @@ class TestDirectoryWriter(unittest.TestCase):
 
     def setUp(self):
         """Create the test environment."""
-        self._logger = logging.getLogger("TestFileWriterLogger")
+        self._logger = _EmptyLogger()
         self._test_dir = pathlib.Path("test_dir/")
 
     def test_create_folder(self):

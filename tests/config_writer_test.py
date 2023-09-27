@@ -19,13 +19,10 @@ class ConfigWriterTest(unittest.TestCase):
 
     def test_get_project_config(self):
         """Test that the attributes get set correctly."""
-        # Arrange
         project_name = "test_project"
 
-        # Act
         actual = main.get_project_metadata(project_name)
 
-        # Assert
         self.assertIsNotNone(actual)
         actual_project_data = actual.get("project", None)
         self.assertIsNotNone(actual_project_data)
