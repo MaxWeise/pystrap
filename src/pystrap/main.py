@@ -270,6 +270,16 @@ def get_project_metadata(
     description: str | None = None,
     author: Author | None = None
 ) -> dict[str, Any]:
+    """Get the metadata for the pyproject.toml file.
+
+    Args:
+        project_name (str): The name of the created project.
+        description (str): Short description of the created project.
+        author (Author): The name and email adress of the author.
+
+    Returns
+        project_metadata (dict[str, Any]): The metadata of the created project.
+    """
     project_metadata: dict[str, Any] = {}
 
     author_name: str = author.name if author else ""
@@ -295,6 +305,12 @@ def get_project_metadata(
 
 
 def get_build_system_config() -> dict[str, Any]:
+    """Get the standart configuration for the build system.
+
+    Returns:
+        build_system_config (dict[str, Any]): A dictionary containing default
+            settings for a <build-system> section in a pyproject.toml file.
+    """
     build_system_config: dict[str, Any] = {
         "[build-system]": {
             "requires": [
