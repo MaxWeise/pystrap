@@ -237,6 +237,16 @@ class StreamLogger:
 
 
 class FileLogger:
+    """Implements a logger that logs to a file.
+
+    The log file will be created and prefixed with the current date and time
+    in iso format.
+
+    Attrs:
+        _logging_level (int): The level at which messages should be logged.
+        _logger (logging.Logger): The logger used to log to a file.
+    """
+
     def __init__(self, logging_level: int):
         """Initialize a logger object that logs to a file.
 
@@ -513,17 +523,21 @@ def setup_cli_arguments() -> argparse.Namespace:
         prog="pystrap",
     )
 
-    parser.add_argument(
-        "project_name", help="The Name of the project to be bootstrapped."
+    mutex_group = parser.add_mutually_exclusive_group(required=True)
+
+    # === required but mutex arguments
+    mutex_group.add_argument(
+        "--project_name", help="The Name of the project to be bootstrapped."
     )
 
-    parser.add_argument(
+    mutex_group.add_argument(
         "-i", "--interactive",
         action="store_true",
         default=False,
         help="Activate interactive mode when creating a new project."
     )
 
+    # === optional arguments
     parser.add_argument(
         "--author-name", default=None, help="The name of the author"
     )
@@ -562,7 +576,7 @@ def run_console_script(console_arguments, logger: Logger) -> None:
     logger.info("Finished execution")
 
 
-def run_tui(console_arguments, logger: Logger) -> None:
+def run_tui(console_arguments: argparse.Namespace, logger: Logger) -> None:
     """Run the terminal interface.
 
     Prompt the user to interactively insert the needed data.
@@ -572,6 +586,7 @@ def run_tui(console_arguments, logger: Logger) -> None:
         logger (Logger): Logger object that adheres to the defined
             Logger interface.
     """
+    _ = console_arguments
     terminal_client = UI()
     terminal_client.ask_project_name()
     terminal_client.ask_author_name()
