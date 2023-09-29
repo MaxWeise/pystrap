@@ -6,19 +6,44 @@ Created: 22.08.2023
 
 import argparse
 import dataclasses
+import datetime
 import logging
 import pathlib
 import subprocess
 from typing import Any, Protocol
 
-import bullet
+import bullet  # type: ignore
 import tomli_w
 
 # === Type definition
 pathlike = pathlib.Path | str
 
 
+@dataclasses.dataclass
+class Author:
+    """The representation of an author.
+
+    Attrs:
+        name (str | none): Fullname of the Author. May contain spaces.
+        email (str | none): Email address of the author.
+    """
+
+    name: str
+    email: str
+
+
 class UI:
+    """Provide an interface in the terminal for the user to input data.
+
+    Note: All Attributes default to None.
+
+    Attributes:
+        _project_name (str | None): The name of the project.
+        _auhtor_name (str | None): The name of the author.
+        _auhtor_email (str | None): The Email of the author.
+        _distributable (bool): Indicates if the package will
+            be uploaded to PyPi.
+    """
 
     def __init__(self) -> None:
         """Initialize an object that handles interactions with the UI."""
@@ -27,8 +52,39 @@ class UI:
         self._auhtor_email: str | None = None
         self._distributable: bool = False
 
+    @property
+    def project_name(self) -> str:
+        """The name of the project."""
+        if not self._project_name:
+            return "example-project"
+        else:
+            return self._project_name
+
+    @property
+    def author(self) -> Author:
+        """The name and email adress of the author."""
+        name = self._auhtor_name
+        email = self._auhtor_email
+
+        return Author(
+            name if name else "John Doe",
+            email if email else "john.doe@example.com"
+        )
+
+    @property
+    def distributable(self) -> bool:
+        """If the package will be distributed or not."""
+        return self._distributable
+
     def _validate_email(self, email_to_validate: str) -> bool:
-        """Perform simple checks on a string to verify it's format."""
+        """Perform simple checks on a string to verify it's format.
+
+        Args:
+            email_to_validate (str): The email that should be validated.
+
+        Returns:
+            bool: True, if the format of the Email is valid. False otherwise.
+        """
         if "@" not in email_to_validate:
             return False
 
@@ -40,14 +96,21 @@ class UI:
         return True
 
     def ask_project_name(self) -> None:
+        """Prompt the user to input the name of the projct."""
         prompt = bullet.Input(prompt="Please give the name of the project: ")
         self._project_name = prompt.launch()
 
     def ask_author_name(self) -> None:
+        """Prompt the user to input the name of the author."""
         prompt = bullet.Input(prompt="Please give the name of the Author: ")
         self._auhtor_name = prompt.launch()
 
     def ask_author_email(self) -> None:
+        """Prompt the user to input the email adress of the author.
+
+        The method will perform validation on the format of the email adress.
+        If the format is not valid, a value of None will be set.
+        """
         prompt = bullet.Input(
             prompt="Please give the email adress of the author: "
         )
@@ -60,6 +123,7 @@ class UI:
             self._auhtor_email = user_input
 
     def ask_distributable(self) -> None:
+        """Ask the user if the package should be uploaded to PyPi."""
         prompt = bullet.YesNo(
                 prompt="Do you intend to upload the project ot PyPI?",
                 default="N"
@@ -67,6 +131,17 @@ class UI:
 
         user_input = prompt.launch()
         self._distributable = user_input
+
+    def __repr__(self) -> str:
+        """Print a representation of the state of the TUI Client object.
+
+        This method is intended for developer to observe the state of the
+        object.
+        """
+        return (f"{self._project_name=}\n"
+                f"{self._auhtor_name=}\n"
+                f"{self._auhtor_email=}\n"
+                f"{self._distributable=}\n")
 
 
 class Logger(Protocol):
@@ -161,17 +236,59 @@ class StreamLogger:
         self._logger.error(message)
 
 
-@dataclasses.dataclass
-class Author:
-    """The representation of an author.
+class FileLogger:
+    def __init__(self, logging_level: int):
+        """Initialize a logger object that logs to a file.
 
-    Attrs:
-        name (str | none): Fullname of the Author. May contain spaces.
-        email (str | none): Email address of the author.
-    """
+        Args:
+            logging_level (int): The log level.
+        """
+        self._logging_level = logging_level
 
-    name: str
-    email: str
+        loggmessage_format = logging.Formatter("[%(levelname)s] - %(message)s")
+
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging_level)
+
+        iso_time: str = datetime.datetime.now().isoformat()
+        file_handler = logging.FileHandler(
+            f"{iso_time}_logfile.txt",
+            encoding="utf-8"
+        )
+        file_handler.setLevel(logging_level)
+        file_handler.setFormatter(loggmessage_format)
+        logger.addHandler(file_handler)
+
+        self._logger: logging.Logger = logger
+
+    @property
+    def logging_level(self) -> int:
+        """The level at which the logger operates."""
+        return self._logging_level
+
+    def info(self, message: str) -> None:
+        """Emit an info message.
+
+        Args:
+            message (str): The message emitted.
+        """
+        self._logger.info(message)
+
+    def warning(self, message: str) -> None:
+        """Emit a warning message.
+
+        Args:
+            message (str): The message emitted.
+        """
+        self._logger.warning(message)
+
+    def error(self, message: str) -> None:
+        """Emit an error message.
+
+        Args:
+            message (str): The message emitted.
+        """
+        self._logger.error(message)
 
 
 # === IO Operations
@@ -383,7 +500,8 @@ def logger_factory(requested_logger: str, logging_level: int = logging.INFO):
     """
     # TODO: Add file logger
     loggers = {
-        "console": StreamLogger
+        "console": StreamLogger,
+        "file": FileLogger
     }
 
     return loggers[requested_logger](logging_level)
@@ -401,6 +519,7 @@ def setup_cli_arguments() -> argparse.Namespace:
 
     parser.add_argument(
         "-i", "--interactive",
+        action="store_true",
         default=False,
         help="Activate interactive mode when creating a new project."
     )
@@ -443,17 +562,34 @@ def run_console_script(console_arguments, logger: Logger) -> None:
     logger.info("Finished execution")
 
 
-def run_tui(console_arguments=None, logger: Logger | None = None) -> None:
+def run_tui(console_arguments, logger: Logger) -> None:
+    """Run the terminal interface.
+
+    Prompt the user to interactively insert the needed data.
+
+    Args:
+        console_arguments: The arguments given from the console.
+        logger (Logger): Logger object that adheres to the defined
+            Logger interface.
+    """
     terminal_client = UI()
     terminal_client.ask_project_name()
     terminal_client.ask_author_name()
     terminal_client.ask_author_email()
     terminal_client.ask_distributable()
 
-    print(terminal_client)
+    project: str = terminal_client.project_name
+    author: Author = terminal_client.author
+    distributable: bool = terminal_client.distributable
+
+    create_project_structure(project, logger)
+    write_configuration_to_files(
+        project, logger, author=author, distributable=distributable
+    )
 
 
 def main():
+    """Run the main function of the application."""
     console_arguments = setup_cli_arguments()
 
     if console_arguments.interactive:
@@ -466,5 +602,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    run_tui()
+    main()
