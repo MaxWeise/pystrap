@@ -62,8 +62,7 @@ class TestFileWriter(unittest.TestCase):
     def test_create_file_FileExists(self):
         """Test correct behaviour when a file exists."""
         file_path = self._test_file
-        with open(file_path, "w+", encoding="utf-8"):
-            pass
+        subprocess.run(["touch", file_path])
 
         actual = main.create_file(file_path, self._logger)
         self.assertTrue(actual)

@@ -4,10 +4,41 @@ Created: 13.09.2023
 @author: Max Weise
 """
 
+import subprocess
 import unittest
+import os
+import pathlib
 from typing import Any
 
 from pystrap import main  # type: ignore
+
+
+class _EmptyLogger:
+    """This class holds stub methods to adhere to the logger protocoll."""
+
+    def info(self, message: str) -> None:
+        """Print an info message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        # Stub method
+
+    def warning(self, message: str) -> None:
+        """Print an warning message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        # Stub method
+
+    def error(self, message: str) -> None:
+        """Print an error message to the screen.
+
+        Args:
+            message (str): The message printed to the screen.
+        """
+        # Stub method
 
 
 class ConfigWriterTest(unittest.TestCase):
@@ -15,7 +46,8 @@ class ConfigWriterTest(unittest.TestCase):
 
     def setUp(self):
         """Create the test environment."""
-        return super().setUp()
+        self._test_file = pathlib.Path("test_file.toml")
+        self._empty_logger = _EmptyLogger()
 
     def test_get_project_config(self):
         """Test that the attributes get set correctly."""
@@ -51,9 +83,50 @@ class ConfigWriterTest(unittest.TestCase):
             }]
         )
 
+    def test_write_contents_to_file(self):
+        """Test that contents get written to a file."""
+        file_path = self._test_file
+        test_contents = "Test Contents"
+        subprocess.run(["touch", file_path])
+
+        rv = main.write_contents_to_file(
+            file_path,
+            test_contents,
+            self._empty_logger
+        )
+
+        self.assertTrue(rv)
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            actual = f.read()
+            self.assertEqual(actual, test_contents)
+
+    def test_write_contents_to_file_fileIsNotEmpty(self):
+        """Don't override the contents of an existing file."""
+        test_file = self._test_file
+        existing_contents = "This is a string"
+
+        with open(test_file, "w+", encoding="utf-8") as f:
+            f.write(existing_contents)
+
+        rv = main.write_contents_to_file(
+            test_file,
+            "Other contents",
+            self._empty_logger
+        )
+
+        self.assertTrue(rv)
+
+        with open(test_file, "r", encoding="utf-8") as f:
+            actual = f.read()
+            self.assertEqual(actual, existing_contents)
+
+
     def tearDown(self):
         """Destroy the test environment."""
-        return super().tearDown()
+        if self._test_file.exists():
+            os.remove(self._test_file)
+
 
 
 if __name__ == "__main__":
