@@ -348,6 +348,14 @@ def write_contents_to_file(
     Returns:
         bool: Sucessvalue of the method.
     """
+    # check if file is empty. If not, log and return
+    # TODO: This should throw an exception and not return True
+    with open(path_to_file, "r", encoding="utf-8") as f:
+        file_contents: list[str] = f.readlines()
+        if file_contents:
+            logger.warning("The file is not emtpy. Do not write to file.")
+            return True
+
     logger.info(f"Writing to {path_to_file}")
     with open(path_to_file, "w", encoding="utf-8") as f:
         f.write(contents)
