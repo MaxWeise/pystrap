@@ -40,15 +40,15 @@ def create_project_structure(
 
     logger.info("Creating folders")
     for folder_name in project_folders:
-        pystrap.io_operations.create_folder(folder_name, logger)
+        pystrap.io_operations.create_folder(folder_name)
 
     logger.info("Creating files")
     for file_name in toplevel_file_names:
-        pystrap.io_operations.create_file(file_name, logger)
+        pystrap.io_operations.create_file(file_name)
 
     logger.info("Creating init-files")
     for init_file in init_files:
-        pystrap.io_operations.create_file(init_file, logger)
+        pystrap.io_operations.create_file(init_file)
 
     return True
 
@@ -133,12 +133,17 @@ def write_configuration_to_files(
         author=author,
         description=description
     )
-
-    pystrap.io_operations.write_contents_to_file(
-        pathlib.Path("pyproject.toml"),
-        tomli_w.dumps(pyprojcect_contents),
-        logger
-    )
+    path_to_pyproject_file: pathlib.Path = pathlib.Path("pyproject.toml")
+    try:
+        pystrap.io_operations.write_contents_to_file(
+            path_to_pyproject_file,
+            tomli_w.dumps(pyprojcect_contents)
+        )
+    except pystrap.system_core.FileNotEmptyException:
+        logger.warning(
+            f"The file {path_to_pyproject_file} is not empty. "
+            "Can't write to a non-empty file!"
+        )
 
     if distributable:
         setup_py_contents = (
@@ -148,10 +153,16 @@ def write_configuration_to_files(
             "if __name__ == '__main__':\n"
             "    setup()"
         )
-        pystrap.io_operations.write_contents_to_file(
-            pathlib.Path("setup.py"),
-            setup_py_contents,
-            logger
-        )
+        path_to_setup_file: pathlib.Path = pathlib.Path("setup.py")
+        try:
+            pystrap.io_operations.write_contents_to_file(
+                path_to_setup_file,
+                setup_py_contents
+            )
+        except pystrap.system_core.FileNotEmptyException:
+            logger.warning(
+                f"The file {path_to_pyproject_file} is not empty. "
+                "Can't write to a non-empty file!"
+            )
 
     return True

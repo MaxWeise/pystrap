@@ -12,6 +12,12 @@ from typing import Protocol
 import bullet  # type: ignore
 
 
+class FileNotEmptyException(Exception):
+    """Raised when a file is not empty."""
+
+    ...
+
+
 @dataclasses.dataclass
 class Author:
     """The representation of an author.
