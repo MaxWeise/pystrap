@@ -4,13 +4,13 @@ Created: 09.09.2023
 @author: Max Weise
 """
 
-import logging
 import os
 import pathlib
 import subprocess
 import unittest
 
-from pystrap import main
+from pystrap.io_operations import (create_file, create_folder,  # type: ignore
+                                   write_contents_to_file)
 
 
 class _EmptyLogger:
@@ -53,7 +53,7 @@ class TestFileWriter(unittest.TestCase):
         """Test the correct creation of a file."""
         file_path = self._test_file
 
-        actual = main.create_file(file_path, self._logger)
+        actual = create_file(file_path, self._logger)
 
         file_exists = file_path.exists()
         self.assertTrue(actual)
@@ -64,8 +64,47 @@ class TestFileWriter(unittest.TestCase):
         file_path = self._test_file
         subprocess.run(["touch", file_path])
 
-        actual = main.create_file(file_path, self._logger)
+        actual = create_file(file_path, self._logger)
+
         self.assertTrue(actual)
+
+    def test_write_contents_to_file(self):
+        """Test that contents get written to a file."""
+        file_path = self._test_file
+        test_contents = "Test Contents"
+        subprocess.run(["touch", file_path])
+
+        rv = write_contents_to_file(
+            file_path,
+            test_contents,
+            self._logger
+        )
+
+        self.assertTrue(rv)
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            actual = f.read()
+            self.assertEqual(actual, test_contents)
+
+    def test_write_contents_to_file_fileIsNotEmpty(self):
+        """Don't override the contents of an existing file."""
+        test_file = self._test_file
+        existing_contents = "This is a string"
+
+        with open(test_file, "w+", encoding="utf-8") as f:
+            f.write(existing_contents)
+
+        rv = write_contents_to_file(
+            test_file,
+            "Other contents",
+            self._logger
+        )
+
+        self.assertTrue(rv)
+
+        with open(test_file, "r", encoding="utf-8") as f:
+            actual = f.read()
+            self.assertEqual(actual, existing_contents)
 
     def tearDown(self):
         """Cleanup the test environment."""
@@ -85,7 +124,7 @@ class TestDirectoryWriter(unittest.TestCase):
         """Test the correct creation of a directory."""
         folder_path = self._test_dir
 
-        actual = main.create_folder(folder_path, self._logger)
+        actual = create_folder(folder_path, self._logger)
 
         folder_exists = folder_path.exists()
         self.assertTrue(actual)
@@ -96,7 +135,7 @@ class TestDirectoryWriter(unittest.TestCase):
         folder_path = self._test_dir
         subprocess.run(["mkdir", folder_path])
 
-        actual = main.create_folder(folder_path, self._logger)
+        actual = create_folder(folder_path, self._logger)
         self.assertTrue(actual)
 
     def tearDown(self):
