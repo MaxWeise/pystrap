@@ -40,15 +40,24 @@ def create_project_structure(
 
     logger.info("Creating folders")
     for folder_name in project_folders:
-        pystrap.io_operations.create_folder(folder_name)
+        try:
+            pystrap.io_operations.create_folder(pathlib.Path(folder_name))
+        except FileExistsError:
+            logger.warning(f"The folder {folder_name} already exists.")
 
     logger.info("Creating files")
     for file_name in toplevel_file_names:
-        pystrap.io_operations.create_file(file_name)
+        try:
+            pystrap.io_operations.create_file(pathlib.Path(file_name))
+        except FileExistsError:
+            logger.warning(f"The file {file_name} already exists.")
 
     logger.info("Creating init-files")
     for init_file in init_files:
-        pystrap.io_operations.create_file(init_file)
+        try:
+            pystrap.io_operations.create_file(pathlib.Path(init_file))
+        except FileExistsError:
+            logger.warning(f"The file {init_file} already exists.")
 
     return True
 
