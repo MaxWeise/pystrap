@@ -36,9 +36,9 @@ class TestFileWriter(unittest.TestCase):
         file_path = self._test_file
         subprocess.run(["touch", file_path])
 
-        actual = create_file(file_path)
-
-        self.assertTrue(actual)
+        with self.assertRaises(FileExistsError):
+            actual = create_file(file_path)
+            self.assertTrue(actual)
 
     def test_write_contents_to_file(self):
         """Test that contents get written to a file."""
@@ -99,8 +99,9 @@ class TestDirectoryWriter(unittest.TestCase):
         folder_path = self._test_dir
         subprocess.run(["mkdir", folder_path])
 
-        actual = create_folder(folder_path)
-        self.assertTrue(actual)
+        with self.assertRaises(FileExistsError):
+            actual = create_folder(folder_path)
+            self.assertTrue(actual)
 
     def tearDown(self):
         """Cleanup the test environment."""

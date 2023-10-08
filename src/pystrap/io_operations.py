@@ -14,7 +14,7 @@ pathlike = pathlib.Path | str
 
 
 # === IO Operations
-def create_folder(path_to_folder: pathlike) -> bool:
+def create_folder(path_to_folder: pathlib.Path) -> bool:
     """Create a folder.
 
     Args:
@@ -23,13 +23,19 @@ def create_folder(path_to_folder: pathlike) -> bool:
 
     Returns:
         bool: Sucessvalue of the function.
+
+    Raises:
+        FileExistsError: When the given directory already exists.
     """
+    if path_to_folder.exists():
+        raise FileExistsError
+
     subprocess.run(["mkdir", "-p", path_to_folder])
 
     return True
 
 
-def create_file(path_to_file: pathlike) -> bool:
+def create_file(path_to_file: pathlib.Path) -> bool:
     """Create a file.
 
     Args:
@@ -38,7 +44,13 @@ def create_file(path_to_file: pathlike) -> bool:
 
     Returns:
         bool: The sucessvalue of the function.
+
+    Raises:
+        FileExistsError: When the given filepath already exists.
     """
+    if path_to_file.exists():
+        raise FileExistsError
+
     subprocess.run(["touch", path_to_file])
 
     return True
