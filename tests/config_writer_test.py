@@ -137,14 +137,15 @@ class SetuppyWriterTest(unittest.TestCase):
 
         self.assertTrue(rv)
         actual_file_contents = self._read_file_contents(self._test_file)
-        expected_file_contents = """from setuptools import setup
-        \n
-        \n
-        if __name__ == '__main__':\n
-            setup()
-        """
-        # self.assertEqual(actual_file_contents, expected_file_contents)
-        print(f"{actual_file_contents = }", f"{expected_file_contents = }")
+        expected_file_contents = (
+            "from setuptools import setup"
+            "\n"
+            "\n"
+            "if __name__ == '__main__':\n"
+            "    setup()"
+        )
+
+        self.assertEqual(actual_file_contents, expected_file_contents)
 
     def tearDown(self) -> None:
         """Destroy the test environment."""
