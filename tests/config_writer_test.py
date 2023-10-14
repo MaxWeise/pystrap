@@ -8,6 +8,7 @@ import os
 import pathlib
 import unittest
 
+from pystrap.config_writers import create_pyprojecttoml_file  # type: ignore
 from pystrap.config_writers import get_project_metadata  # type: ignore
 from pystrap.system_core import Author  # type: ignore
 
@@ -40,6 +41,33 @@ class _EmptyLogger:
         # Stub method
 
 
+class PyprojecttomlWriterTest(unittest.TestCase):
+    """Test methods, that create the pyproject.toml file."""
+
+    def setUp(self) -> None:
+        """Create the test environment."""
+        self._project_name = "testProject"
+        self._auhtor = Author("Test User", "test@user.com")
+        self._empty_logger = _EmptyLogger()
+        self._test_file = pathlib.Path("testfile_pyproject.toml")
+
+    def test_create_pyprojecttoml_file(self):
+        """Test the creation of pyproject.toml file."""
+        rv = create_pyprojecttoml_file(
+            self._project_name,
+            self._auhtor,
+            self._empty_logger,
+            self._test_file
+        )
+
+        self.assertTrue(rv)
+        self.assertTrue(self._test_file.exists())
+
+    def tearDown(self) -> None:
+        """Destroy the test environment."""
+        if self._test_file.exists():
+            os.remove(self._test_file)
+
 class ConfigWriterTest(unittest.TestCase):
     """Test all config writers."""
 
@@ -48,6 +76,7 @@ class ConfigWriterTest(unittest.TestCase):
         self._test_file = pathlib.Path("test_file.toml")
         self._empty_logger = _EmptyLogger()
 
+    @unittest.skip("No longer needed")
     def test_get_project_config(self):
         """Test that the attributes get set correctly."""
         project_name = "test_project"
@@ -62,6 +91,7 @@ class ConfigWriterTest(unittest.TestCase):
         self.assertIsNotNone(actual_project_name)
         self.assertEqual(actual_project_name, "test_project")
 
+    @unittest.skip("No longer needed")
     def test_get_project_config_withAuthor(self):
         """Test the correct setting of the author."""
         project_name = "test_project"

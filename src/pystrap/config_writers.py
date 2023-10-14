@@ -16,6 +16,39 @@ import pystrap.system_core
 pathlike = pathlib.Path | str
 
 
+# === Functions get sorted by what file they create
+def create_pyprojecttoml_file(
+    project_name: str,
+    auhtor: pystrap.system_core.Author,
+    logger: pystrap.system_core.Logger,
+    file_name: pathlike = "pyproject.toml"
+) -> bool:
+    """Create the pyproject.toml file.
+
+    Use the argument [file_name] in testing and set it to something different than
+    the standard name. This ensures that the original pyproject file is not acidentally removed
+    when executing automated tests.
+
+    Args:
+        project_name (str): The name of the prject.
+        author (Author): The authors name and email adress.
+        logger: The logger object handeling log statements.
+        file_name (pathlike, optional): Change the name when automatically
+            testing the function. Defaults to pyproject.toml.
+    """
+    # Create the file
+    try:
+        pystrap.io_operations.create_file(file_name, logger)
+    except FileExistsError:
+        logger.warning(f"The file {file_name} already exists.")
+
+    # Assemble the contents of the file
+
+    # Write contents to file
+
+    return True
+
+
 # === Usecase specific functions
 def create_project_structure(
     project_name: str,
