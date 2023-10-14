@@ -7,7 +7,9 @@ Created: 13.09.2023
 import os
 import pathlib
 import unittest
+from typing import Any
 
+import tomli
 from pystrap.config_writers import create_pyprojecttoml_file  # type: ignore
 from pystrap.config_writers import get_project_metadata  # type: ignore
 from pystrap.system_core import Author  # type: ignore
@@ -51,6 +53,39 @@ class PyprojecttomlWriterTest(unittest.TestCase):
         self._empty_logger = _EmptyLogger()
         self._test_file = pathlib.Path("testfile_pyproject.toml")
 
+    def _read_file_contents_toml(
+        self, file_name: pathlib.Path
+    ) -> dict[str, str]:
+        with open(file_name, "r", encoding="utf-8") as f:
+            file_contents = f.read()
+            return tomli.loads(file_contents)
+
+    def _get_expected_file_content_minimal(self) -> dict[str, Any]:
+        """Get a minimal verson of the pyproject file contents."""
+        project_metadata: dict[str, Any] = {}
+        author = self._auhtor
+
+        project_section = {
+            "name": self._project_name,
+            "version": "0.0.1",
+            "authors": author.to_list(),
+            "maintainers": author.to_list(),
+            "requires-python": ">=3.10"
+        }
+
+        buildsystem_section = {
+            "requires": [
+                "setuptools>=42",
+                "wheel"
+            ],
+            "build-backend": "setuptools.build_meta"
+        }
+
+        project_metadata["project"] = project_section
+        project_metadata["build-system"] = buildsystem_section
+
+        return project_metadata
+
     def test_create_pyprojecttoml_file(self):
         """Test the creation of pyproject.toml file."""
         rv = create_pyprojecttoml_file(
@@ -62,6 +97,19 @@ class PyprojecttomlWriterTest(unittest.TestCase):
 
         self.assertTrue(rv)
         self.assertTrue(self._test_file.exists())
+
+        actual_file_contents = self._read_file_contents_toml(self._test_file)
+        self.assertNotEqual(
+            actual_file_contents.get("project", None),
+            None
+        )
+        self.assertNotEqual(
+            actual_file_contents.get("build-system", None),
+            None
+        )
+
+        expected_file_contents = self._get_expected_file_content_minimal()
+        self.assertEqual(actual_file_contents, expected_file_contents)
 
     def tearDown(self) -> None:
         """Destroy the test environment."""

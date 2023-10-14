@@ -19,7 +19,7 @@ pathlike = pathlib.Path | str
 # === Functions get sorted by what file they create
 def create_pyprojecttoml_file(
     project_name: str,
-    auhtor: pystrap.system_core.Author,
+    author: pystrap.system_core.Author,
     logger: pystrap.system_core.Logger,
     file_name: pathlike = "pyproject.toml"
 ) -> bool:
@@ -43,8 +43,30 @@ def create_pyprojecttoml_file(
         logger.warning(f"The file {file_name} already exists.")
 
     # Assemble the contents of the file
+    project_metadata: dict[str, Any] = {}
+    section_project: dict[str, Any] = {
+        "name": project_name,
+        "version": "0.0.1",
+        "authors": author.to_list(),
+        "maintainers": author.to_list(),
+        "requires-python": ">=3.10"
+    }
+    section_buildsytem = {
+        "requires": [
+            "setuptools>=42",
+            "wheel"
+        ],
+        "build-backend": "setuptools.build_meta"
+    }
+    project_metadata["project"] = section_project
+    project_metadata["build-system"] = section_buildsytem
 
     # Write contents to file
+    pystrap.io_operations.write_contents_to_file(
+        file_name,
+        tomli_w.dumps(project_metadata),
+        logger
+    )
 
     return True
 
