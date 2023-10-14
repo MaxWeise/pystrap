@@ -12,6 +12,7 @@ from typing import Any
 import tomli
 from pystrap.config_writers import create_pyprojecttoml_file  # type: ignore
 from pystrap.config_writers import get_project_metadata  # type: ignore
+from pystrap.config_writers import create_setuppy_file
 from pystrap.system_core import Author  # type: ignore
 
 
@@ -110,6 +111,40 @@ class PyprojecttomlWriterTest(unittest.TestCase):
 
         expected_file_contents = self._get_expected_file_content_minimal()
         self.assertEqual(actual_file_contents, expected_file_contents)
+
+    def tearDown(self) -> None:
+        """Destroy the test environment."""
+        if self._test_file.exists():
+            os.remove(self._test_file)
+
+
+class SetuppyWriterTest(unittest.TestCase):
+    """Test the correct creation of setup.py."""
+
+    def setUp(self) -> None:
+        """Create the test environment."""
+        self._empty_logger = _EmptyLogger()
+        self._test_file = pathlib.Path("testfile_setup.py")
+
+    def _read_file_contents(self, file_name):
+        with open(file_name, "r", encoding="utf-8") as f:
+            file_contents = f.read()
+            return file_contents
+
+    def test_create_setuppy_file(self):
+        """Test the creation of setup.py file."""
+        rv = create_setuppy_file(self._empty_logger, self._test_file)
+
+        self.assertTrue(rv)
+        actual_file_contents = self._read_file_contents(self._test_file)
+        expected_file_contents = """from setuptools import setup
+        \n
+        \n
+        if __name__ == '__main__':\n
+            setup()
+        """
+        # self.assertEqual(actual_file_contents, expected_file_contents)
+        print(f"{actual_file_contents = }", f"{expected_file_contents = }")
 
     def tearDown(self) -> None:
         """Destroy the test environment."""

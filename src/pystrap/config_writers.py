@@ -25,9 +25,9 @@ def create_pyprojecttoml_file(
 ) -> bool:
     """Create the pyproject.toml file.
 
-    Use the argument [file_name] in testing and set it to something different than
-    the standard name. This ensures that the original pyproject file is not acidentally removed
-    when executing automated tests.
+    Use the argument [file_name] in testing and set it to something different
+    than the standard name. This ensures that the original pyproject file is
+    not acidentally removed when executing automated tests.
 
     Args:
         project_name (str): The name of the prject.
@@ -36,13 +36,11 @@ def create_pyprojecttoml_file(
         file_name (pathlike, optional): Change the name when automatically
             testing the function. Defaults to pyproject.toml.
     """
-    # Create the file
     try:
         pystrap.io_operations.create_file(file_name, logger)
     except FileExistsError:
         logger.warning(f"The file {file_name} already exists.")
 
-    # Assemble the contents of the file
     project_metadata: dict[str, Any] = {}
     section_project: dict[str, Any] = {
         "name": project_name,
@@ -61,10 +59,47 @@ def create_pyprojecttoml_file(
     project_metadata["project"] = section_project
     project_metadata["build-system"] = section_buildsytem
 
-    # Write contents to file
     pystrap.io_operations.write_contents_to_file(
         file_name,
         tomli_w.dumps(project_metadata),
+        logger
+    )
+
+    return True
+
+
+def create_setuppy_file(
+    logger: pystrap.system_core.Logger,
+    file_name: pathlike = "setup.py"
+) -> bool:
+    """Create the setup.py file.
+
+    Use the argument [file_name] in testing and set it to something different
+    than the standard name. This ensures that the original setup file is not
+    acidentally removed when executing automated tests.
+
+    Args:
+        project_name (str): The name of the prject.
+        author (Author): The authors name and email adress.
+        logger: The logger object handeling log statements.
+        file_name (pathlike, optional): Change the name when automatically
+            testing the function. Defaults to pyproject.toml.
+    """
+    try:
+        pystrap.io_operations.create_file(file_name, logger)
+    except FileExistsError:
+        logger.warning(f"The file {file_name} already exists.")
+
+    setup_py_contents = (
+        "from setuptools import setup"
+        "\n"
+        "\n"
+        "if __name__ == '__main__':\n"
+        "    setup()"
+    )
+    pystrap.io_operations.write_contents_to_file(
+        pathlib.Path(file_name),
+        setup_py_contents,
         logger
     )
 
