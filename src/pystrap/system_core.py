@@ -30,6 +30,10 @@ class Author:
     name: str
     email: str
 
+    def to_list(self):
+        """Return the name and email adress as a list."""
+        return [self.name, self.email]
+
 
 class UI:
     """Provide an interface in the terminal for the user to input data.

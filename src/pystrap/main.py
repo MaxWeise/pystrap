@@ -65,10 +65,14 @@ def run_console_script(
     )
     distributable = console_arguments.distributable
 
-    pystrap.config_writers.create_project_structure(project, logger)
-    pystrap.config_writers.write_configuration_to_files(
-        project, logger, author=author, distributable=distributable
+    pystrap.config_writers.create_project_structure(
+        project, logger, distributable
     )
+
+    pystrap.config_writers.create_pyprojecttoml_file(project, author, logger)
+
+    if distributable:
+        pystrap.config_writers.create_setuppy_file(logger)
 
     logger.info("Finished execution")
 
@@ -97,10 +101,14 @@ def run_tui(
     author: pystrap.system_core.Author = terminal_client.author
     distributable: bool = terminal_client.distributable
 
-    pystrap.config_writers.create_project_structure(project, logger)
-    pystrap.config_writers.write_configuration_to_files(
-        project, logger, author=author, distributable=distributable
+    pystrap.config_writers.create_project_structure(
+        project, logger, distributable
     )
+
+    pystrap.config_writers.create_pyprojecttoml_file(project, author, logger)
+
+    if distributable:
+        pystrap.config_writers.create_setuppy_file(logger)
 
 
 def main():
