@@ -14,10 +14,7 @@ pathlike = pathlib.Path | str
 
 
 # === IO Operations
-def create_folder(
-    path_to_folder: pathlike,
-    logger: pystrap.system_core.Logger
-) -> bool:
+def create_folder(path_to_folder: pathlib.Path) -> bool:
     """Create a folder.
 
     Args:
@@ -26,17 +23,19 @@ def create_folder(
 
     Returns:
         bool: Sucessvalue of the function.
+
+    Raises:
+        FileExistsError: When the given directory already exists.
     """
-    logger.info(f"Creating the folder {path_to_folder}")
+    if path_to_folder.exists():
+        raise FileExistsError
+
     subprocess.run(["mkdir", "-p", path_to_folder])
 
     return True
 
 
-def create_file(
-    path_to_file: pathlike,
-    logger: pystrap.system_core.Logger
-) -> bool:
+def create_file(path_to_file: pathlib.Path) -> bool:
     """Create a file.
 
     Args:
@@ -45,9 +44,23 @@ def create_file(
 
     Returns:
         bool: The sucessvalue of the function.
+
+    Raises:
+        FileExistsError: When the given filepath already exists.
     """
-    logger.info(f"Creating the file {path_to_file}")
+    if path_to_file.exists():
+        raise FileExistsError
+
     subprocess.run(["touch", path_to_file])
+
+    return True
+
+
+def _file_is_empty(path_to_file: pathlike) -> bool:
+    with open(path_to_file, "r", encoding="utf-8") as f:
+        file_contents: list[str] = f.readlines()
+        if file_contents:
+            return False
 
     return True
 
@@ -55,7 +68,6 @@ def create_file(
 def write_contents_to_file(
     path_to_file: pathlike,
     contents: str,
-    logger: pystrap.system_core.Logger
 ) -> bool:
     """Write a string to an already existing file.
 
@@ -65,16 +77,16 @@ def write_contents_to_file(
 
     Returns:
         bool: Sucessvalue of the method.
-    """
-    # check if file is empty. If not, log and return
-    # TODO: This should throw an exception and not return True
-    with open(path_to_file, "r", encoding="utf-8") as f:
-        file_contents: list[str] = f.readlines()
-        if file_contents:
-            logger.warning("The file is not emtpy. Do not write to file.")
-            return True
 
-    logger.info(f"Writing to {path_to_file}")
+    Raises:
+        FileNotEmptyException: Gets raised when trying to write to
+            a non-empty file.
+    """
+    if not _file_is_empty(path_to_file):
+        raise pystrap.system_core.FileNotEmptyException(
+            "Can't write to a non-empty file!"
+        )
+
     with open(path_to_file, "w", encoding="utf-8") as f:
         f.write(contents)
 

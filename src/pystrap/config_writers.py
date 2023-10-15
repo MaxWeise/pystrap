@@ -38,7 +38,10 @@ def create_pyprojecttoml_file(
     """
     logger.info("Creating pyproject.toml file.")
     try:
-        pystrap.io_operations.create_file(file_name, logger)
+        if isinstance(file_name, str):
+            file_name = pathlib.Path(file_name)
+
+        pystrap.io_operations.create_file(file_name)
     except FileExistsError:
         logger.warning(f"The file {file_name} already exists.")
 
@@ -63,7 +66,6 @@ def create_pyprojecttoml_file(
     pystrap.io_operations.write_contents_to_file(
         file_name,
         tomli_w.dumps(project_metadata),
-        logger
     )
 
     return True
@@ -88,7 +90,10 @@ def create_setuppy_file(
     """
     logger.info("Creating setup.py file.")
     try:
-        pystrap.io_operations.create_file(file_name, logger)
+        if isinstance(file_name, str):
+            file_name = pathlib.Path(file_name)
+
+        pystrap.io_operations.create_file(file_name)
     except FileExistsError:
         logger.warning(f"The file {file_name} already exists.")
 
@@ -102,7 +107,6 @@ def create_setuppy_file(
     pystrap.io_operations.write_contents_to_file(
         pathlib.Path(file_name),
         setup_py_contents,
-        logger
     )
 
     return True
@@ -112,7 +116,6 @@ def create_setuppy_file(
 def create_project_structure(
     project_name: str,
     logger: pystrap.system_core.Logger,
-    distributable: bool = False
 ) -> bool:
     """Create all necessary folders and configuration files.
 
@@ -127,10 +130,16 @@ def create_project_structure(
 
     logger.info("Creating folders")
     for folder_name in project_folders:
-        pystrap.io_operations.create_folder(folder_name, logger)
+        try:
+            pystrap.io_operations.create_folder(pathlib.Path(folder_name))
+        except FileExistsError:
+            logger.warning(f"The folder {folder_name} already exists.")
 
     logger.info("Creating init-files")
     for init_file in init_files:
-        pystrap.io_operations.create_file(init_file, logger)
+        try:
+            pystrap.io_operations.create_file(pathlib.Path(init_file))
+        except FileExistsError:
+            logger.warning(f"The file {init_file} already exists.")
 
     return True
