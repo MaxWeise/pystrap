@@ -122,21 +122,12 @@ def create_project_structure(
     Return:
         bool: Sucessvalue of the function.
     """
-    # toplevel_file_names = ["pyproject.toml"]
-
-    # if distributable:
-    #     toplevel_file_names.append("setup.py")
-
     project_folders = [f"src/{project_name}", "tests"]
     init_files = ["tests/__init__.py", f"src/{project_name}/__init__.py"]
 
     logger.info("Creating folders")
     for folder_name in project_folders:
         pystrap.io_operations.create_folder(folder_name, logger)
-
-    # logger.info("Creating files")
-    # for file_name in toplevel_file_names:
-    #     pystrap.io_operations.create_file(file_name, logger)
 
     logger.info("Creating init-files")
     for init_file in init_files:
