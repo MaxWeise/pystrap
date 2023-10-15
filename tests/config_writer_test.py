@@ -11,7 +11,6 @@ from typing import Any
 
 import tomli
 from pystrap.config_writers import create_pyprojecttoml_file  # type: ignore
-from pystrap.config_writers import get_project_metadata  # type: ignore
 from pystrap.config_writers import create_setuppy_file
 from pystrap.system_core import Author  # type: ignore
 
