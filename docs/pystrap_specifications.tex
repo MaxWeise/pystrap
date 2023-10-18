@@ -1,0 +1,56 @@
+\documentclass[a4paper, 12pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{tabu}
+\usepackage{helvet}
+
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\author{Max Weise}
+\title{pystrap - Project Specifications}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{File Specifications}
+The following section shows how the config files will be created by the
+programm. It will also contain a minimal example, which is used as a reference
+for developers.
+
+\subsection{pyproject.toml File}
+The \texttt{pyproject.toml} file is used to configure the project in a
+standarditzed format. We can define dependencies, metadata and even entry
+points for console scripts here. Many third party tools use the
+\texttt{pyproject.toml} file for configuration, that's why this file is the
+default output of the pystrap script. The following
+table~\ref{tab:supported_data_fields} shows a list of all supported fields and
+the default values asociated with them.
+
+\begin{table}
+    \begin{tabu}{| X[l] | X[2,l] | X[1.4,l] | X[l] |}
+        \hline
+        \textbf{Field} & \textbf{Description} & \textbf{Type} & \textbf{Default Value} \\
+        \hline
+        [project] & Nonoptional section-identifier. Define metadata of the project here. & Top-level section & - \\ \hline
+        name & The name of the project. & String & - \\ \hline
+        version & The version of the project. pystrap uses semantic versioning as default scheme & String & 0.0.1 \\ \hline
+        authors & List of authors of the project. An author consists of a name and an email adress. & List[String, String] & - \\ \hline
+        maintainers & List of maintainers of the project. pystrap will fill in the same data as in the authors field. & List[String, String] & - \\ \hline
+        requires-python & Specify the minimal version of python the application needs to run on. & String & $\geq$ 3.10 \\ \hline
+        [build-system] & Specifies the system used to build the python application. & Top-level section & - \\ \hline
+        requires & Define the dependencies for the build system & List[String, String] & ["setuptools $\geq$ 42", "wheel"] \\ \hline
+    \end{tabu}
+    \caption{Supported data fields.}
+    \label{tab:supported_data_fields}
+\end{table}
+
+\subsection{setup.py File}
+
+\subsection{package-init Files}
+
+
+\end{document}
