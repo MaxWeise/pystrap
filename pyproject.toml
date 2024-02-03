@@ -20,14 +20,14 @@ classifiers = [
 
 dependencies = [
     "tomli == 2.0.1",
-    "tomli_w == 1.0.0"
+    "tomli_w == 1.0.0",
+    "bullet == 2.2.0"
 ]
 
 [project.scripts]
 pystrap = "pystrap.main:main"
 
 [project.optional-dependencies]
-tui = ["bullet == 2.2.0"]
 dev = ["flake8", "isort", "mypy", "pydocstyle"]
 
 [build-system]

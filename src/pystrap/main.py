@@ -66,7 +66,7 @@ def run_console_script(
     distributable = console_arguments.distributable
 
     pystrap.config_writers.create_project_structure(
-        project, logger, distributable
+        project, logger
     )
 
     pystrap.config_writers.create_pyprojecttoml_file(project, author, logger)
@@ -102,7 +102,7 @@ def run_tui(
     distributable: bool = terminal_client.distributable
 
     pystrap.config_writers.create_project_structure(
-        project, logger, distributable
+        project, logger
     )
 
     pystrap.config_writers.create_pyprojecttoml_file(project, author, logger)
