@@ -1,6 +1,6 @@
 [project]
 name = "pystrap"
-version = "3.0.0"
+version = "3.0.1"
 description = "A simple CLI util to setup python projects."
 requires-python = ">=3.10"
 readme = "README.md"

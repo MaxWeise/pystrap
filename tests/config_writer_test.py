@@ -49,7 +49,7 @@ class PyprojecttomlWriterTest(unittest.TestCase):
     def setUp(self) -> None:
         """Create the test environment."""
         self._project_name = "testProject"
-        self._auhtor = Author("Test User", "test@user.com")
+        self._author = Author("Test User", "test@user.com")
         self._empty_logger = _EmptyLogger()
         self._test_file = pathlib.Path("testfile_pyproject.toml")
 
@@ -63,12 +63,12 @@ class PyprojecttomlWriterTest(unittest.TestCase):
     def _get_expected_file_content_minimal(self) -> dict[str, Any]:
         """Get a minimal verson of the pyproject file contents."""
         project_metadata: dict[str, Any] = {}
-        author = self._auhtor
+        author = self._author
 
         project_section = {
             "name": self._project_name,
             "version": "0.0.1",
-            "authors": author.to_list(),
+            "authors": [{"name": "Test User", "email": "test@user.com"}],
             "maintainers": author.to_list(),
             "requires-python": ">=3.10"
         }
@@ -90,7 +90,7 @@ class PyprojecttomlWriterTest(unittest.TestCase):
         """Test the creation of pyproject.toml file."""
         rv = create_pyprojecttoml_file(
             self._project_name,
-            self._auhtor,
+            self._author,
             self._empty_logger,
             self._test_file
         )
