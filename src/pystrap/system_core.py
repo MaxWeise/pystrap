@@ -32,7 +32,7 @@ class Author:
 
     def to_list(self):
         """Return the name and email adress as a list."""
-        return [self.name, self.email]
+        return [{"name": self.name, "email": self.email}]
 
 
 class UI:
