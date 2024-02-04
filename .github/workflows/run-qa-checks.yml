@@ -2,7 +2,7 @@
 name: Run quality checks on the source code
 
 on:
-  pull-request:
+  pull_request:
     branches:
       - main
   push:
