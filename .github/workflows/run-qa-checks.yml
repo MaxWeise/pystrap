@@ -5,6 +5,9 @@ on:
   pull-request:
     branches:
       - main
+  push:
+    branches:
+      - feat*
 
 jobs:
   build:
