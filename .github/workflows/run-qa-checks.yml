@@ -7,7 +7,7 @@ on:
       - main
   push:
     branches:
-      - feat*
+      - feat**
 
 jobs:
   build:
